@@ -132,11 +132,13 @@ function restore(isJoin){
 function transferRe(str){
     var sep = path.sep==="\\"?"\\\\":"\/";
 
-    str = str.replace(/(?:\\\\|\/|^)\*\*(?:\\\\|\/)/g , "__folders__");
-    str = str.replace(/\*+/g , "__files__");
-
-    str = str.replace(/__folders__/g, sep + '(?:[\\w\\u4e00-\\u9fa5._-]*' + sep + '?)*');
-    str = str.replace(/__files__/g, '[\\w\\u4e00-\\u9fa5._-]*');
+    str = str.replace(/(?:\\\\|\/|^)\*\*(\\\\|\/)|\*+/g , function(m){
+        if(RegExp.$1){
+            return sep + '(?:[\\w\\u4e00-\\u9fa5._-]*' + sep + '?)*'
+        }else {
+            return '[\\w\\u4e00-\\u9fa5._-]*'
+        }
+    });
 
     return str;
 }
