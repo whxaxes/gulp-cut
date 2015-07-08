@@ -66,7 +66,9 @@ gulp.task("test2" , function(){
 ```
 
 * 运用于seajs项目<br>
+
 >lib目录下的js不需要使用transport编译，但是需要压缩，所以在进行编译前将lib目录下的js文件截取，让其他需要编译的进行编译，然后再将截取的js恢复到文件流进行压缩。
+
 ```
 var cut = require('gulp-cut')
 gulp.task('build-js' , function(){
