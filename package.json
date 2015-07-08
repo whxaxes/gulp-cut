@@ -1,6 +1,6 @@
 {
   "name": "gulp-cut",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Gulp plugin - you could cut off file stream and restore it",
   "main": "index.js",
   "scripts": {
@@ -10,5 +10,17 @@
   "license": "MIT",
   "dependencies": {
     "through2": "^2.0.0"
-  }
+  },
+  "directories": {
+    "test": "test"
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/whxaxes/gulp-cut.git"
+  },
+  "bugs": {
+    "url": "https://github.com/whxaxes/gulp-cut/issues"
+  },
+  "homepage": "https://github.com/whxaxes/gulp-cut#readme"
 }
