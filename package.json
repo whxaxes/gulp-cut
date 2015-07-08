@@ -1,0 +1,14 @@
+{
+  "name": "gulp-cut",
+  "version": "1.0.2",
+  "description": "Gulp plugin - you could cut off file stream and restore it",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "wanghx",
+  "license": "MIT",
+  "dependencies": {
+    "through2": "^2.0.0"
+  }
+}
