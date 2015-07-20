@@ -88,4 +88,3 @@ gulp.task('build-js' , function(){
 });
 ```
 
->tips:如果需要在多个task中使用cut，建议在每个task中用`createCut()`实例化一个新的cut对象，避免同时使用同一个cut对象造成数据混乱
