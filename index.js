@@ -8,55 +8,105 @@
 
 var through = require("through2");
 var path = require("path");
+var defaultId = "defaults";
 
 /**
  * Cut类
  * @constructor
  */
 function Cut(){
-    this.cache = [];
+    this.cache = {};
 }
 
-//截取文件流
-Cut.prototype.cut = function(pathes){
-    return save.call(this , pathes , true);
+/**
+ * 截取文件流
+ * @param id        缓存标记，如果不传则为defaults
+ * @param pathes    缓存路径
+ * @returns {*}
+ */
+Cut.prototype.cut = function(id, pathes){
+    if (arguments.length == 1) {
+        pathes = id;
+        id = defaultId;
+    }
+
+    return save.call(this , {
+        pathes: pathes,
+        isCut: true,
+        id: id
+    });
 };
-//拷贝文件流
-Cut.prototype.copy = function(pathes){
-    return save.call(this , pathes , false);
+
+/**
+ * 拷贝文件流
+ * @param id        缓存标记，如果不传则为defaults
+ * @param pathes    缓存路径
+ * @returns {*}
+ */
+Cut.prototype.copy = function(id, pathes){
+    if (arguments.length == 1) {
+        pathes = id;
+        id = defaultId;
+    }
+
+    return save.call(this , {
+        pathes: pathes,
+        isCut: false,
+        id: id
+    });
 };
-//删除文件流
+
+/**
+ * 删除文件流
+ * @param pathes
+ * @returns {*}
+ */
 Cut.prototype.del = function(pathes){
-    return save.call(this , pathes , true , true);
+    return save.call(this , {
+        pathes: pathes,
+        isCut: true,
+        noSave: true
+    });
 };
+
 //恢复文件流
-Cut.prototype.join = function(pathes){
-    return restore.call(this , true);
+Cut.prototype.join = function(id){
+    return restore.call(this, true, id || defaultId);
 };
+
 //覆盖文件流
-Cut.prototype.cover = function(pathes){
-    return restore.call(this , false);
+Cut.prototype.cover = function(id){
+    return restore.call(this, false, id || defaultId);
 };
-//覆盖文件流
-Cut.prototype.clear = function(pathes){
-    this.cache.length = 0;
-};
-//生成一个新的cut对象
-Cut.prototype.createCut = function(){
-    return new Cut();
+
+//清空文件流
+Cut.prototype.clear = function(id){
+    id = id || defaultId;
+
+    if(this.cache[id] && this.cache[id].length){
+        this.cache[id].length = 0;
+    }
 };
 
 /**
  * 保存匹配路径的文件
- * @param pathes
- * @param isCut     如果为true，截取文件，即不让文件回归文件流，否则回归文件流
- * @param noSave    如果为剪切，且noSave，即直接删掉某一块文件流
+ * @param opt   传入的参数:
+ * pathes    路径
+ * cache     缓存id
+ * isCut     如果为true，截取文件，即不让文件回归文件流，否则回归文件流
+ * noSave    如果为剪切，且noSave，即直接删掉某一块文件流
  */
-function save(pathes , isCut , noSave){
-    var that = this;
+function save(opt){
+    var pathes = opt.pathes;
+    var isCut = opt.isCut;
+    var noSave = opt.noSave;
+    var id = opt.id;
 
     var type = Object.prototype.toString.call(pathes);
     var RE;
+
+    this.cache[id] = this.cache[id] || [];
+    var cache = this.cache[id];
 
     //将pathes参数转成正则
     if(type === "[object Array]"){
@@ -83,7 +133,7 @@ function save(pathes , isCut , noSave){
         if(RE && RE.test(file.path)){
             RE.lastIndex = 0;
 
-            if(!noSave) that.cache.push(isCut ? file : file.clone());
+            if(!noSave && cache) cache.push(isCut ? file : file.clone());
 
             if (isCut) return done();
         }
@@ -97,9 +147,13 @@ function save(pathes , isCut , noSave){
 /**
  * 将前面保存的数据放置回文件流中
  * @param isJoin    如果为true，则不删除其他数据，否则覆盖其他数据
+ * @id              缓存标记id
  */
-function restore(isJoin){
+function restore(isJoin, id){
     var that = this;
+
+    this.cache[id] = this.cache[id] || [];
+    var cache = this.cache[id];
 
     var _transform = function(file , enc , done){
         if(isJoin){
@@ -112,11 +166,11 @@ function restore(isJoin){
     var _flush = function(done){
         var stream = this;
 
-        that.cache.forEach(function(file){
+        cache.forEach(function(file){
             stream.push(file);
         });
 
-        that.clear();
+        that.clear(id);
 
         done();
     };
