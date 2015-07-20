@@ -188,9 +188,9 @@ function transferRe(str){
 
     str = str.replace(/(?:\\\\|\/|^)\*\*(\\\\|\/)|\*+/g , function(m){
         if(RegExp.$1){
-            return sep + '(?:[\\w.-]*' + sep + ')*'
+            return sep + '(?:[\\w\\u4e00-\\u9fa5.-]*' + sep + ')*'
         }else {
-            return '[\\w.-]*'
+            return '[\\w\\u4e00-\\u9fa5.-]*'
         }
     });
 

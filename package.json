@@ -1,6 +1,6 @@
 {
   "name": "gulp-cut",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Gulp plugin - you could cut off file stream and restore it",
   "main": "index.js",
   "scripts": {
